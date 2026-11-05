@@ -54,6 +54,13 @@ describe("with a healthy model", () => {
     expect(await writeEpitaph(facts, "classic")).toEqual(first);
   });
 
+  it("writes a fresh epitaph when the last words change", async () => {
+    await writeEpitaph(facts, "classic");
+    process.env.EPITAPH_MODEL = "mock-broken-json";
+    const updated = await writeEpitaph({ ...facts, lastWords: "release v3" }, "classic");
+    expect(updated.fromModel).toBe(false);
+  });
+
   it("classifies last words from JSON", async () => {
     expect(await classifyLastWords(facts.lastWords)).toEqual({
       category: "Humble",
@@ -100,6 +107,14 @@ describe("when the model times out or is unreachable", () => {
     expect((await autopsy(facts)).text).toMatch(/^Speculation:/);
     expect((await seance(facts)).fromModel).toBe(false);
     process.env.OLLAMA_URL = url;
+  });
+});
+
+describe("autopsy fallbacks", () => {
+  it("does not declare living or unborn repos dead", async () => {
+    process.env.OLLAMA_URL = "http://127.0.0.1:9";
+    expect((await autopsy({ ...facts, status: "alive", archived: false })).text).toMatch(/no cause of death/);
+    expect((await autopsy({ ...facts, status: "never-lived", archived: false })).text).toMatch(/not a single commit/);
   });
 });
 

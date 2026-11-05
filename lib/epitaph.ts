@@ -34,6 +34,10 @@ function hash(value: string): number {
   return [...value].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7);
 }
 
+function factsFingerprint(f: RepoFacts): string {
+  return hash(`${f.died}|${f.status}|${f.lastWords}`).toString(36);
+}
+
 export function stockEpitaph(facts: RepoFacts, style: EpitaphStyle): string {
   return STOCK_EPITAPHS[hash(`${facts.owner}/${facts.repo}/${style}`) % STOCK_EPITAPHS.length];
 }
@@ -78,7 +82,7 @@ async function tryModel<T>(run: () => Promise<T | null>): Promise<T | null> {
 }
 
 export function writeEpitaph(facts: RepoFacts, style: EpitaphStyle): Promise<AiText> {
-  return cached(["epitaph", facts.owner, facts.repo, style], async () => {
+  return cached(["epitaph", facts.owner, facts.repo, style, factsFingerprint(facts)], async () => {
     const text = await tryModel(async () => cleanEpitaph(await generate({ prompt: epitaphPrompt(facts, style) })));
     return text ? { text, fromModel: true } : { text: stockEpitaph(facts, style), fromModel: false };
   });
@@ -100,17 +104,30 @@ function asSpeculation(text: string): string {
 }
 
 function fallbackAutopsy(f: RepoFacts): string {
+  if (f.status === "alive") {
+    return `Speculation: no cause of death found, the patient committed as recently as ${f.died.slice(0, 10)}. The casket stays closed for now.`;
+  }
+  if (f.status === "never-lived") {
+    return "Speculation: not a single commit was ever made, so there is nothing to examine. It may have been an idea that never left the drawing board.";
+  }
   const quiet = f.status === "archived" ? "its maintainers chose to archive it" : "its maintainers' attention moved elsewhere";
   return `Speculation: ${quiet}, and the commits stopped after "${f.lastWords}". With ${f.openIssues} open issues left behind, nobody picked up the shovel.`;
 }
 
+const AUTOPSY_TASK: Record<RepoFacts["status"], string> = {
+  dead: "guess why this repository stopped receiving commits",
+  archived: "guess why this repository stopped receiving commits and was archived",
+  alive: "playfully explain that this repository is still alive, so no cause of death can be found",
+  "never-lived": "guess why this repository never received a single commit",
+};
+
 export function autopsy(facts: RepoFacts): Promise<AiText> {
   const prompt = `TASK: autopsy
-In exactly 2 sentences, guess why this repository stopped receiving commits. Begin with "Speculation:". ${RULES}
+In exactly 2 sentences, ${AUTOPSY_TASK[facts.status]}. Begin with "Speculation:". ${RULES}
 
 Facts:
 ${factsBlock(facts)}`;
-  return cached(["autopsy", facts.owner, facts.repo], async () => {
+  return cached(["autopsy", facts.owner, facts.repo, factsFingerprint(facts)], async () => {
     const text = await tryModel(() => generate({ prompt }));
     return text ? { text: asSpeculation(text), fromModel: true } : { text: fallbackAutopsy(facts), fromModel: false };
   });
@@ -118,6 +135,7 @@ ${factsBlock(facts)}`;
 
 function fallbackSeance(f: RepoFacts): string {
   const mourners = f.stars === 1 ? "one soul still remembers" : `${f.stars.toLocaleString("en-US")} souls still remember`;
+  if (f.status === "never-lived") return `I was ${f.repo}. I never said a word, yet ${mourners} me.`;
   return `I was ${f.repo}. My last words were "${f.lastWords}", and ${mourners} me.`;
 }
 
@@ -127,7 +145,7 @@ You are the ghost of this repository. Speak one short first-person message (max 
 
 Facts:
 ${factsBlock(facts)}`;
-  return cached(["seance", facts.owner, facts.repo], async () => {
+  return cached(["seance", facts.owner, facts.repo, factsFingerprint(facts)], async () => {
     const text = await tryModel(() => generate({ prompt }));
     return text ? { text, fromModel: true } : { text: fallbackSeance(facts), fromModel: false };
   });
