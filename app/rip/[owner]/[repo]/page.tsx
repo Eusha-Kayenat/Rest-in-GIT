@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
-import type { CSSProperties, ReactNode } from "react";
+import { Suspense, type CSSProperties, type ReactNode } from "react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { AiEpitaph } from "@/components/result/AiEpitaph";
+import { FactJokes } from "@/components/result/FactJokes";
 import { GothicScenery } from "@/components/result/GothicScenery";
 import { GraveMessage } from "@/components/result/GraveMessage";
+import { LastWordsVerdict } from "@/components/result/LastWordsVerdict";
+import { Rituals } from "@/components/result/Rituals";
+import { RotatingMessage } from "@/components/result/RotatingMessage";
 import { ShareActions } from "@/components/result/ShareActions";
 import { TombstoneCard } from "@/components/TombstoneCard";
 import { daysBetween, yearOf } from "@/lib/dates";
+import { toEpitaphStyle, type EpitaphStyle } from "@/lib/epitaph";
 import { getCachedRepoFacts, GraveError, type GraveErrorKind } from "@/lib/github";
 import { ALIVE_MESSAGE } from "@/lib/status";
 import type { RepoFacts } from "@/lib/types";
@@ -22,6 +28,7 @@ const ERROR_TITLES: Record<GraveErrorKind, string> = {
 };
 
 type Params = Promise<{ owner: string; repo: string }>;
+type SearchParams = Promise<{ style?: string | string[] }>;
 type FactsResult = { facts: RepoFacts } | { error: GraveError };
 
 async function loadFacts(owner: string, repo: string): Promise<FactsResult> {
@@ -36,14 +43,8 @@ function deathNotice(facts: RepoFacts): string {
   const days = daysBetween(new Date(facts.died), new Date()).toLocaleString("en-US");
   if (facts.status === "alive") return ALIVE_MESSAGE;
   if (facts.status === "never-lived") return "It never drew a single breath. Not one commit.";
-  if (facts.status === "archived") return `Archived by its maintainers, ${days} days after its last words`;
+  if (facts.status === "archived") return `Archived by its maintainers. ${days} days since its last words`;
   return `${facts.causeOfDeath}. Declared dead after ${days} days of silence`;
-}
-
-function placeholderEpitaph(facts: RepoFacts): [string, string] {
-  if (facts.status === "alive") return ["Still committing, still awake,", "come back when it takes a break."];
-  if (facts.status === "never-lived") return ["It never shipped a single line,", "and rested well, by all design."];
-  return ["Here lies a repo that served us well,", "its final commit, its parting bell."];
 }
 
 function siteHost(): string {
@@ -55,8 +56,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return { title: `RIP ${owner}/${repo} · Rest-in-GIT` };
 }
 
-function Memorial({ facts }: { facts: RepoFacts }) {
-  const [first, second] = placeholderEpitaph(facts);
+function Memorial({ facts, style }: { facts: RepoFacts; style: EpitaphStyle }) {
   const shareText = `RIP ${facts.repo}, ${yearOf(facts.born)}–${yearOf(facts.died)}. Last words: “${facts.lastWords}”`;
   return (
     <>
@@ -64,14 +64,19 @@ function Memorial({ facts }: { facts: RepoFacts }) {
       <TombstoneCard
         facts={facts}
         epitaph={
-          <p>
-            {first}
-            <br />
-            {second}
-          </p>
+          <Suspense key={style} fallback={<RotatingMessage />}>
+            <AiEpitaph facts={facts} style={style} />
+          </Suspense>
+        }
+        verdict={
+          <Suspense fallback={null}>
+            <LastWordsVerdict lastWords={facts.lastWords} />
+          </Suspense>
         }
       />
+      <Rituals owner={facts.owner} repo={facts.repo} style={style} />
       <ShareActions shareText={shareText} />
+      <FactJokes facts={facts} />
       <p className="permalink">
         {siteHost()}/rip/{facts.owner}/{facts.repo}
       </p>
@@ -98,13 +103,14 @@ function ResultShell({ children }: { children: ReactNode }) {
   );
 }
 
-export default async function RipPage({ params }: { params: Params }) {
+export default async function RipPage({ params, searchParams }: { params: Params; searchParams: SearchParams }) {
   const { owner, repo } = await params;
+  const { style } = await searchParams;
   const result = await loadFacts(owner, repo);
   return (
     <ResultShell>
       {"facts" in result ? (
-        <Memorial facts={result.facts} />
+        <Memorial facts={result.facts} style={toEpitaphStyle(typeof style === "string" ? style : undefined)} />
       ) : (
         <GraveMessage title={ERROR_TITLES[result.error.kind]} message={result.error.message} />
       )}
