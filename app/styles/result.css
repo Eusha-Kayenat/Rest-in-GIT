@@ -1,0 +1,724 @@
+/* Ported from design/figma-make-export/result/index.css, scoped to .page-result. */
+.page-result {
+  .page-shell {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--night);
+  }
+
+  .page-shell::before {
+    position: fixed;
+    z-index: -3;
+    inset: 0;
+    content: '';
+    background-image:
+      linear-gradient(180deg, rgba(8, 9, 19, .5) 0%, rgba(8, 9, 17, .3) 38%, rgba(4, 6, 9, .86) 100%),
+      var(--graveyard-photo);
+    background-position: center 44%;
+    background-size: cover;
+    filter: grayscale(1) sepia(.12) hue-rotate(225deg) saturate(1.15) contrast(1.12);
+    transform: scale(1.03);
+  }
+
+  .page-shell::after {
+    position: fixed;
+    z-index: -2;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 78% 12%, rgba(223, 224, 216, .2), transparent 14%),
+      linear-gradient(90deg, rgba(4, 5, 12, .48), transparent 33%, transparent 67%, rgba(4, 5, 12, .52)),
+      repeating-linear-gradient(105deg, transparent 0 80px, rgba(255,255,255,.012) 82px 83px);
+    box-shadow: inset 0 0 180px 50px rgba(0,0,0,.52);
+  }
+
+  .gothic-scenery {
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .blood-moon {
+    position: absolute;
+    top: 92px;
+    left: calc(50% + 380px);
+    width: 118px;
+    height: 118px;
+    border: 1px solid rgba(232, 224, 207, .31);
+    border-radius: 50%;
+    opacity: .72;
+    background: radial-gradient(circle at 38% 35%, var(--pale) 0 4%, var(--stone) 52%, var(--night) 100%);
+    box-shadow: 0 0 32px rgba(210, 207, 201, .28), 0 0 100px rgba(132, 125, 145, .27);
+  }
+
+  .blood-moon::after {
+    position: absolute;
+    inset: -35px;
+    border-radius: 50%;
+    content: '';
+    background: radial-gradient(circle, rgba(190, 185, 193, .13), transparent 66%);
+  }
+
+  .blood-moon span {
+    position: absolute;
+    top: 25px;
+    left: 22px;
+    width: 21px;
+    height: 13px;
+    border-radius: 50%;
+    opacity: .18;
+    background: var(--night);
+    box-shadow: 50px 19px 0 6px var(--night), 19px 52px 0 3px var(--night), 61px 62px 0 -2px var(--night);
+  }
+
+  .bats {
+    position: absolute;
+    top: 128px;
+    left: calc(50% - 590px);
+    width: 210px;
+    fill: rgba(3, 4, 8, .86);
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,.7));
+  }
+
+  .coffin {
+    position: absolute;
+    bottom: -61px;
+    width: 115px;
+    opacity: .86;
+    filter: drop-shadow(0 14px 15px rgba(0,0,0,.7));
+    transform-origin: bottom center;
+  }
+
+  .coffin path:first-child {
+    fill: var(--night);
+    stroke: rgba(151, 144, 139, .23);
+    stroke-width: 2px;
+  }
+
+  .coffin path:nth-child(2) {
+    fill: var(--night);
+    stroke: rgba(151, 144, 139, .16);
+  }
+
+  .coffin .coffin-cross {
+    fill: var(--amber);
+    opacity: .48;
+  }
+
+  .coffin-left {
+    left: 6%;
+    transform: rotate(-8deg);
+  }
+
+  .coffin-right {
+    right: 5%;
+    transform: rotate(9deg) scale(.82);
+  }
+
+  .grave-cross {
+    position: absolute;
+    bottom: 28px;
+    width: 8px;
+    height: 127px;
+    opacity: .67;
+    background: var(--night);
+    filter: drop-shadow(0 6px 5px var(--night));
+    transform-origin: bottom;
+  }
+
+  .grave-cross span {
+    position: absolute;
+    top: 29px;
+    left: -28px;
+    width: 64px;
+    height: 8px;
+    background: var(--night);
+  }
+
+  .grave-cross i {
+    position: absolute;
+    bottom: -5px;
+    left: -25px;
+    width: 58px;
+    height: 18px;
+    border-radius: 50% 50% 0 0;
+    background: var(--night);
+  }
+
+  .cross-left {
+    left: 17%;
+    transform: rotate(5deg);
+  }
+
+  .cross-right {
+    right: 17%;
+    bottom: 4px;
+    transform: rotate(-7deg) scale(.75);
+  }
+
+  .ground-fog {
+    position: absolute;
+    right: -15%;
+    bottom: -70px;
+    left: -15%;
+    height: 220px;
+    border-radius: 50%;
+    opacity: .24;
+    filter: blur(28px);
+    background: radial-gradient(ellipse, var(--stone), color-mix(in srgb, var(--stone), transparent 45%) 35%, transparent 70%);
+  }
+
+  .fog-one {
+    transform: translateX(-23%) scaleX(.72);
+  }
+
+  .fog-two {
+    bottom: -100px;
+    opacity: .18;
+    transform: translateX(27%) scaleX(.68);
+  }
+
+  .site-header {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(229, 228, 217, .14);
+  }
+
+  .brand {
+    color: var(--pale);
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-decoration: none;
+  }
+
+  .brand span {
+    letter-spacing: .12em;
+  }
+
+  .brand i {
+    color: var(--stone);
+    font-size: .78em;
+    font-weight: 500;
+  }
+
+  .bury-link {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    color: var(--pale);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color .2s ease;
+  }
+
+  .bury-link span {
+    display: grid;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border: 1px solid rgba(213, 210, 216, .4);
+    border-radius: 50%;
+    font-size: 15px;
+  }
+
+  .bury-link:hover { color: var(--amber); }
+
+  .result {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 37px 20px 52px;
+  }
+
+  .eyebrow {
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    color: var(--stone);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+  }
+
+  .eyebrow span {
+    width: 25px;
+    height: 1px;
+    background: var(--amber);
+  }
+
+  .result > h1 {
+    margin: 6px 0 3px;
+    color: var(--pale);
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 3vw, 39px);
+    font-weight: 500;
+    letter-spacing: -.02em;
+    line-height: 1;
+    text-shadow: 0 2px 30px var(--night);
+  }
+
+  .death-notice {
+    margin: 0 0 20px;
+    color: var(--stone);
+    font-family: var(--font-serif);
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: .07em;
+    text-shadow: 0 2px 10px var(--night);
+  }
+
+  .tombstone {
+    position: relative;
+    width: min(446px, calc(100vw - 34px));
+    height: 610px;
+    padding: 71px 46px 56px;
+    overflow: visible;
+    border: 1px solid rgba(229, 229, 218, .67);
+    border-radius: 225px 225px 14px 14px;
+    color: var(--night);
+    background:
+      linear-gradient(180deg, transparent 0 70%, rgba(37,38,34,.17) 100%),
+      radial-gradient(circle at 29% 15%, rgba(255,255,255,.26), transparent 21%),
+      linear-gradient(95deg, var(--stone) 0%, color-mix(in srgb, var(--stone), var(--pale) 24%) 19%, var(--stone) 51%, color-mix(in srgb, var(--stone), var(--pale) 28%) 77%, var(--stone) 100%);
+    box-shadow:
+      0 32px 70px rgba(0, 0, 0, .62),
+      0 0 0 1px rgba(9,9,10,.7),
+      inset 11px 0 23px rgba(255,255,255,.13),
+      inset -14px 0 24px rgba(21,22,19,.19),
+      inset 0 0 0 5px rgba(49,51,45,.18),
+      inset 0 -35px 50px rgba(33,35,31,.18);
+  }
+
+  .tombstone::before {
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(37,39,32,.3);
+    border-radius: 215px 215px 9px 9px;
+    content: '';
+  }
+
+  .stone-grain {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    opacity: .28;
+    mix-blend-mode: multiply;
+    background-image:
+      radial-gradient(circle at 10% 20%, var(--night) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 73% 61%, var(--pale) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 40% 80%, var(--night) 0 .7px, transparent 1px);
+    background-size: 34px 27px, 41px 38px, 25px 31px;
+  }
+
+  .stone-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(255,255,255,.27);
+  }
+
+  .memorial-mark {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 9px;
+  }
+
+  .memorial-mark span {
+    width: 38px;
+    height: 1px;
+    background: rgba(37,39,32,.5);
+  }
+
+  .memorial-mark svg {
+    width: 25px;
+    height: 25px;
+    fill: var(--night);
+    filter: drop-shadow(0 1px 0 rgba(255,255,255,.22));
+  }
+
+  .in-memory {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+
+  .stone-content h2 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 54px;
+    font-weight: 700;
+    letter-spacing: -.035em;
+    line-height: .98;
+    text-shadow: 0 1px 0 rgba(255,255,255,.32), 0 -1px 0 rgba(0,0,0,.5);
+  }
+
+  .repo-owner {
+    margin: 4px 0 0;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .ornament {
+    width: 158px;
+    height: 27px;
+    margin: 9px auto 4px;
+    fill: rgba(42,44,38,.63);
+  }
+
+  .dates {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dates > div {
+    display: flex;
+    width: 94px;
+    flex-direction: column;
+  }
+
+  .dates small {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+  }
+
+  .dates strong {
+    font-family: var(--font-serif);
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  .date-divider {
+    width: 1px;
+    height: 27px;
+    background: rgba(43,45,39,.43);
+  }
+
+  .lifespan {
+    margin: 5px 0 13px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .last-words {
+    position: relative;
+    margin-inline: -9px;
+    padding: 13px 12px 14px;
+    overflow: hidden;
+    border: 1px solid rgba(16, 17, 17, .82);
+    border-radius: 3px;
+    color: var(--pale);
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,.05), transparent 25%),
+      linear-gradient(100deg, var(--night), color-mix(in srgb, var(--night), var(--stone) 9%) 50%, var(--night));
+    box-shadow:
+      inset 0 0 0 2px rgba(225, 220, 207, .08),
+      inset 0 0 20px rgba(0,0,0,.35),
+      0 2px 0 rgba(255,255,255,.2);
+    text-shadow: 0 1px 2px var(--night);
+  }
+
+  .last-words::after {
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(222,218,207,.09);
+    content: '';
+    pointer-events: none;
+  }
+
+  .last-words p, .survivors p {
+    margin: 0 0 7px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+  }
+
+  .last-words p {
+    color: var(--stone);
+  }
+
+  .last-words p span {
+    padding-inline: 7px;
+    color: var(--amber);
+    font-size: 11px;
+  }
+
+  .last-words blockquote {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .epitaph {
+    margin: 12px 0 13px;
+    font-family: var(--font-serif);
+    color: var(--night);
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.28;
+  }
+
+  .survivors {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .survivors p {
+    margin: 0 10px 0 0;
+  }
+
+  .avatar-row {
+    display: flex;
+  }
+
+  .avatar-row img {
+    width: 28px;
+    height: 28px;
+    margin-left: -5px;
+    border: 2px solid var(--stone);
+    border-radius: 50%;
+    object-fit: cover;
+    filter: grayscale(.8) contrast(1.05);
+  }
+
+  .stone-base {
+    position: absolute;
+    z-index: -1;
+    right: -24px;
+    bottom: -17px;
+    left: -24px;
+    height: 39px;
+    border: 1px solid rgba(220,221,211,.47);
+    border-radius: 8px 8px 3px 3px;
+    background: linear-gradient(180deg, var(--stone), color-mix(in srgb, var(--stone), var(--night) 42%));
+    box-shadow: 0 13px 23px rgba(0,0,0,.5), inset 0 3px 5px rgba(255,255,255,.12);
+  }
+
+  .stone-base span {
+    position: absolute;
+    right: -19px;
+    bottom: -12px;
+    left: -19px;
+    height: 15px;
+    border-radius: 4px 4px 1px 1px;
+    background: color-mix(in srgb, var(--stone), var(--night) 58%);
+    box-shadow: 0 9px 24px rgba(0,0,0,.55);
+  }
+
+  .actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 42px;
+  }
+
+  .actions button {
+    display: flex;
+    min-height: 42px;
+    gap: 9px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 17px;
+    border: 1px solid rgba(222, 220, 223, .34);
+    border-radius: 3px;
+    color: var(--pale);
+    background: rgba(17, 17, 25, .78);
+    backdrop-filter: blur(10px);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+
+  .actions button:hover {
+    border-color: rgba(244,243,239,.65);
+    background: rgba(39,38,49,.94);
+    transform: translateY(-2px);
+  }
+
+  .actions button:focus-visible, .bury-link:focus-visible, .brand:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+
+  .actions .primary-action {
+    border-color: var(--pale);
+    color: var(--night);
+    background: var(--pale);
+  }
+
+  .actions .primary-action:hover {
+    color: var(--night);
+    background: var(--amber);
+  }
+
+  .actions button.is-copied {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .actions svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+  }
+
+  .actions .primary-action svg {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .permalink {
+    margin: 14px 0 0;
+    color: rgba(212,210,214,.54);
+    font-size: 9px;
+    letter-spacing: .08em;
+  }
+
+  .photo-credit {
+    position: absolute;
+    right: 13px;
+    bottom: 10px;
+    z-index: 3;
+    margin: 0;
+    color: rgba(229,228,232,.38);
+    font-size: 8px;
+  }
+
+  .photo-credit a {
+    color: inherit;
+  }
+
+  @media (max-width: 600px) {
+    .site-header {
+      width: calc(100% - 32px);
+      padding: 18px 0;
+    }
+
+    .bury-link {
+      font-size: 0;
+    }
+
+    .bury-link span {
+      font-size: 15px;
+    }
+
+    .result {
+      padding: 27px 12px 56px;
+    }
+
+    .result > h1 {
+      margin-bottom: 3px;
+    }
+
+    .tombstone {
+      height: 570px;
+      padding: 62px 31px 46px;
+    }
+
+    .stone-content h2 { font-size: 48px; }
+    .epitaph { font-size: 15px; }
+
+    .blood-moon {
+      top: 99px;
+      right: -13px;
+      left: auto;
+      width: 80px;
+      height: 80px;
+    }
+
+    .bats {
+      top: 125px;
+      left: -20px;
+      width: 130px;
+    }
+
+    .coffin {
+      width: 73px;
+      opacity: .6;
+    }
+
+    .coffin-left { left: -14px; }
+    .coffin-right { right: -18px; }
+    .grave-cross { display: none; }
+
+    .actions {
+      width: min(446px, calc(100vw - 34px));
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      flex: 1;
+      padding-inline: 12px;
+      white-space: nowrap;
+    }
+
+    .actions .primary-action {
+      flex-basis: 100%;
+    }
+
+    .photo-credit {
+      display: none;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .tombstone {
+      height: 550px;
+      padding-inline: 26px;
+    }
+
+    .memorial-mark { margin-bottom: 5px; }
+    .ornament { margin-block: 6px 1px; }
+    .lifespan { margin-bottom: 10px; }
+    .last-words { padding-block: 10px; }
+    .epitaph { margin-block: 9px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .actions button {
+      transition: none;
+    }
+  }
+}
+
+
