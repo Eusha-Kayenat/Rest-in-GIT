@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { autopsy, seance } from "@/lib/epitaph";
+import { autopsy, seance, toEpitaphStyle } from "@/lib/epitaph";
 import { getRepoFacts, GraveError, parseRepoUrl } from "@/lib/github";
 
-type RitualBody = { owner?: unknown; repo?: unknown; ritual?: unknown };
+type RitualBody = { owner?: unknown; repo?: unknown; ritual?: unknown; style?: unknown };
 
 const STATUS: Record<GraveError["kind"], number> = { "not-found": 404, "rate-limited": 429, unknown: 502 };
 
@@ -16,7 +16,8 @@ export async function POST(request: Request) {
   }
   try {
     const facts = await getRepoFacts(ref.owner, ref.repo);
-    return NextResponse.json(ritual === "autopsy" ? await autopsy(facts) : await seance(facts));
+    const style = toEpitaphStyle(typeof body?.style === "string" ? body.style : undefined);
+    return NextResponse.json(ritual === "autopsy" ? await autopsy(facts, style) : await seance(facts, style));
   } catch (error) {
     const grave = error instanceof GraveError ? error : new GraveError("unknown");
     return NextResponse.json({ error: grave.message }, { status: STATUS[grave.kind] });
