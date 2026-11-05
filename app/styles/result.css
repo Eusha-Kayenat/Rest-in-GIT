@@ -774,3 +774,37 @@
   cursor: progress;
   opacity: 0.7;
 }
+
+.page-result .result-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.page-result .graveyard-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid rgba(211, 154, 71, 0.7);
+  border-radius: 999px;
+  background: rgba(211, 154, 71, 0.12);
+  color: #d39a47;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.page-result .graveyard-link:hover {
+  background: #d39a47;
+  color: #0d0914;
+}
+
+@media (max-width: 640px) {
+  .page-result .result-nav { gap: 12px; }
+  .page-result .result-nav .bury-link { font-size: 0; gap: 0; }
+  .page-result .result-nav .bury-link span { font-size: 16px; }
+}

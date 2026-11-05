@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
@@ -98,6 +99,11 @@ export function RepoForm() {
             </button>
           ))}
         </div>
+        <Link className="graveyard-cta" href="/graveyard">
+          <span aria-hidden="true">✝</span>
+          Walk the graveyard of famous dead repos
+          <span aria-hidden="true">→</span>
+        </Link>
       </div>
     </>
   );
