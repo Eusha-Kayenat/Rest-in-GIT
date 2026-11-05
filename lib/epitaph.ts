@@ -103,16 +103,24 @@ function asSpeculation(text: string): string {
   return /^speculation:/i.test(text) ? text : `Speculation: ${text}`;
 }
 
-const STYLE_SIGN_OFF: Record<EpitaphStyle, string> = {
+const STYLE_OPENER: Record<EpitaphStyle, string> = {
   classic: "",
-  shakespearean: " Alas, poor repo, we knew it well.",
-  "noir detective": " Case closed. The dame was technical debt.",
-  "nature documentary": " Here, in the wild, only the starred survive.",
-  "disappointed parent": " We are not angry, just disappointed.",
+  shakespearean: "alas, ",
+  "noir detective": "the case file says ",
+  "nature documentary": "observed in the wild, ",
+  "disappointed parent": "frankly, ",
+};
+
+const SEANCE_SIGN_OFF: Record<EpitaphStyle, string> = {
+  classic: "",
+  shakespearean: " Remember me.",
+  "noir detective": " That's all I know, see.",
+  "nature documentary": " Such is the way of all code.",
+  "disappointed parent": " You never call.",
 };
 
 function fallbackAutopsy(f: RepoFacts, style: EpitaphStyle): string {
-  return autopsyFindings(f) + STYLE_SIGN_OFF[style];
+  return autopsyFindings(f).replace(/^Speculation: /, `Speculation: ${STYLE_OPENER[style]}`);
 }
 
 function autopsyFindings(f: RepoFacts): string {
@@ -151,7 +159,7 @@ function fallbackSeance(f: RepoFacts, style: EpitaphStyle): string {
     f.status === "never-lived"
       ? `I was ${f.repo}. I never said a word, yet ${mourners} me.`
       : `I was ${f.repo}. My last words were "${f.lastWords}", and ${mourners} me.`;
-  return message + STYLE_SIGN_OFF[style];
+  return message + SEANCE_SIGN_OFF[style];
 }
 
 export function seance(facts: RepoFacts, style: EpitaphStyle = "classic"): Promise<AiText> {
