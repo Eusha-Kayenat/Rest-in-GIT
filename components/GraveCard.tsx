@@ -1,11 +1,10 @@
 import Link from "next/link";
-import type { CauseOfDeath, GraveyardEntry } from "@/lib/types";
+import type { GraveyardEntry } from "@/lib/types";
 import { CandleButton } from "./CandleButton";
 
-const CAUSE_LABEL: Record<CauseOfDeath, string> = {
+const CAUSE_LABEL: Record<GraveyardEntry["cause"], string> = {
   archived: "Archived",
   dormant: "Dormant",
-  alive: "Still breathing",
 };
 
 export function GraveCard({ entry }: { entry: GraveyardEntry }) {

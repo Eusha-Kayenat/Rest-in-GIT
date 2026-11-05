@@ -1,6 +1,7 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { formatLifespan, yearOf } from "@/lib/dates";
-import type { Tombstone } from "@/lib/types";
+import type { RepoFacts } from "@/lib/types";
 import { LeafOrnament } from "./result/LeafOrnament";
 
 function MemorialMark() {
@@ -15,8 +16,29 @@ function MemorialMark() {
   );
 }
 
-export function TombstoneCard({ tombstone }: { tombstone: Tombstone }) {
-  const { owner, repo, bornAt, diedAt, lastWords, epitaph, survivedBy } = tombstone;
+function Survivors({ logins }: { logins: string[] }) {
+  if (logins.length === 0) return <p>No known survivors</p>;
+  return (
+    <>
+      <p>Survived by</p>
+      <div className="avatar-row">
+        {logins.map((login) => (
+          <Image
+            key={login}
+            src={`https://avatars.githubusercontent.com/${login}?s=96`}
+            alt={login}
+            title={login}
+            width={96}
+            height={96}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+export function TombstoneCard({ facts, epitaph }: { facts: RepoFacts; epitaph: ReactNode }) {
+  const { owner, repo, born, died, lastWords, status, survivedBy } = facts;
   return (
     <article className="tombstone" aria-label={`Tombstone memorial for ${repo}`}>
       <div className="stone-grain" />
@@ -33,43 +55,27 @@ export function TombstoneCard({ tombstone }: { tombstone: Tombstone }) {
         <div className="dates">
           <div>
             <small>Born</small>
-            <strong title={bornAt.slice(0, 10)}>{yearOf(bornAt)}</strong>
+            <strong title={born.slice(0, 10)}>{yearOf(born)}</strong>
           </div>
           <span className="date-divider" />
           <div>
-            <small>Died</small>
-            <strong title={diedAt.slice(0, 10)}>{yearOf(diedAt)}</strong>
+            <small>{status === "alive" ? "Last seen" : "Died"}</small>
+            <strong title={died.slice(0, 10)}>{yearOf(died)}</strong>
           </div>
         </div>
-        <p className="lifespan">{formatLifespan(new Date(bornAt), new Date(diedAt))}</p>
+        <p className="lifespan">{formatLifespan(new Date(born), new Date(died))}</p>
 
         <div className="last-words">
           <p>
             <span aria-hidden="true">†</span> Last words <span aria-hidden="true">†</span>
           </p>
-          <blockquote>“{lastWords}”</blockquote>
+          <blockquote>{status === "never-lived" ? lastWords : `“${lastWords}”`}</blockquote>
         </div>
 
-        <p className="epitaph">
-          {epitaph[0]}
-          <br />
-          {epitaph[1]}
-        </p>
+        <div className="epitaph">{epitaph}</div>
 
         <div className="survivors">
-          <p>Survived by</p>
-          <div className="avatar-row">
-            {survivedBy.map((person) => (
-              <Image
-                key={person.login}
-                src={person.avatarUrl}
-                alt={person.login}
-                title={person.login}
-                width={96}
-                height={96}
-              />
-            ))}
-          </div>
+          <Survivors logins={survivedBy} />
         </div>
       </div>
       <div className="stone-base">
