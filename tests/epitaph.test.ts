@@ -3,6 +3,7 @@ import type { AddressInfo } from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { EPITAPH_STYLES } from "../lib/ai/styles";
 import { autopsy, classifyLastWords, cleanEpitaph, seance, writeEpitaph } from "../lib/epitaph";
 import type { RepoFacts } from "../lib/types";
 import { createMockOllama } from "../scripts/mock-ollama.mjs";
@@ -119,6 +120,19 @@ describe("when the model times out or is unreachable", () => {
 });
 
 describe("autopsy fallbacks", () => {
+  it("keeps styled fallbacks to two sentences without inventing a cause", async () => {
+    process.env.OLLAMA_URL = "http://127.0.0.1:9";
+    for (const style of EPITAPH_STYLES) {
+      for (const status of ["alive", "never-lived"] as const) {
+        const { text, fromModel } = await autopsy({ ...facts, status, archived: false }, style);
+        expect(fromModel).toBe(false);
+        expect(text).toMatch(/^Speculation:/);
+        expect(text.split(/(?<=\.)\s+/)).toHaveLength(2);
+        expect(text).not.toMatch(/technical debt/);
+      }
+    }
+  });
+
   it("does not declare living or unborn repos dead", async () => {
     process.env.OLLAMA_URL = "http://127.0.0.1:9";
     expect((await autopsy({ ...facts, status: "alive", archived: false })).text).toMatch(/no cause of death/);
