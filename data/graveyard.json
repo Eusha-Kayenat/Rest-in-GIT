@@ -1,0 +1,82 @@
+[
+  {
+    "owner": "request",
+    "repo": "request"
+  },
+  {
+    "owner": "atom",
+    "repo": "atom"
+  },
+  {
+    "owner": "angular",
+    "repo": "angular.js"
+  },
+  {
+    "owner": "adobe",
+    "repo": "brackets"
+  },
+  {
+    "owner": "facebookarchive",
+    "repo": "flux"
+  },
+  {
+    "owner": "ariya",
+    "repo": "phantomjs"
+  },
+  {
+    "owner": "facebookarchive",
+    "repo": "draft-js"
+  },
+  {
+    "owner": "palantir",
+    "repo": "tslint"
+  },
+  {
+    "owner": "rust-lang",
+    "repo": "rls"
+  },
+  {
+    "owner": "sass",
+    "repo": "node-sass"
+  },
+  {
+    "owner": "hashicorp",
+    "repo": "otto"
+  },
+  {
+    "owner": "facebookarchive",
+    "repo": "react-360"
+  },
+  {
+    "owner": "mozilla",
+    "repo": "BrowserQuest"
+  },
+  {
+    "owner": "LightTable",
+    "repo": "LightTable"
+  },
+  {
+    "owner": "bower",
+    "repo": "bower"
+  },
+  {
+    "owner": "twbs",
+    "repo": "ratchet"
+  },
+  {
+    "owner": "iron",
+    "repo": "iron"
+  },
+  {
+    "owner": "psf",
+    "repo": "requests-html"
+  },
+  {
+    "owner": "strongloop",
+    "repo": "loopback"
+  },
+  {
+    "owner": "tj",
+    "repo": "co"
+  }
+]

@@ -4,7 +4,9 @@ import { CandleButton } from "./CandleButton";
 
 const CAUSE_LABEL: Record<GraveyardEntry["cause"], string> = {
   archived: "Archived",
-  dormant: "Dormant",
+  dead: "Dormant",
+  alive: "Still breathing",
+  "never-lived": "Never lived",
 };
 
 export function GraveCard({ entry }: { entry: GraveyardEntry }) {
@@ -32,9 +34,10 @@ export function GraveCard({ entry }: { entry: GraveyardEntry }) {
         <div className="stone-meta">
           <span className="language-dot" />
           {entry.language}
+          <span className="stone-stars">★ {entry.stars.toLocaleString("en-US")}</span>
         </div>
       </div>
-      <CandleButton initialCount={entry.candles} />
+      <CandleButton owner={entry.owner} repo={entry.repo} />
     </article>
   );
 }

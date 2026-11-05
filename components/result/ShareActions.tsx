@@ -1,22 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DownloadIcon, LinkIcon, XIcon } from "../icons";
 
-export function ShareActions({ shareText }: { shareText: string }) {
-  const [copied, setCopied] = useState(false);
-  const [note, setNote] = useState("");
+type ShareActionsProps = { repo: string; shareText: string; cardUrl: string };
+
+export function tweetUrl(text: string, url: string): string {
+  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+}
+
+function useToast(): [string, (message: string) => void] {
+  const [toast, setToast] = useState("");
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(""), 2200);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+  return [toast, setToast];
+}
+
+async function downloadCard(cardUrl: string, filename: string): Promise<void> {
+  const res = await fetch(cardUrl);
+  if (!res.ok) throw new Error(`Card request failed: ${res.status}`);
+  const href = URL.createObjectURL(await res.blob());
+  const link = document.createElement("a");
+  link.href = href;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(href);
+}
+
+export function ShareActions({ repo, shareText, cardUrl }: ShareActionsProps) {
+  const [toast, showToast] = useToast();
+  const [carving, setCarving] = useState(false);
 
   const shareOnX = () => {
-    const text = `${shareText}\n\n${window.location.href}`;
-    window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    window.open(tweetUrl(shareText, window.location.href), "_blank", "noopener,noreferrer");
+  };
+
+  const download = async () => {
+    setCarving(true);
+    try {
+      await downloadCard(cardUrl, `rip-${repo}.png`);
+      showToast("Tombstone carved. Check your downloads.");
+    } catch {
+      showToast("The stonemason dropped the chisel. Try again.");
+    } finally {
+      setCarving(false);
+    }
   };
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
+      showToast("Link copied. Spread the bad news.");
     } catch {
       window.prompt("Copy this link", window.location.href);
     }
@@ -28,16 +67,16 @@ export function ShareActions({ shareText }: { shareText: string }) {
         <button className="primary-action" onClick={shareOnX}>
           <XIcon /> Share on X
         </button>
-        <button onClick={() => setNote("The stonemason is still carving PNG cards. Come back soon.")}>
-          <DownloadIcon /> Download PNG
+        <button onClick={download} disabled={carving} aria-busy={carving}>
+          <DownloadIcon /> {carving ? "Carving…" : "Download PNG"}
         </button>
-        <button onClick={copyLink} className={copied ? "is-copied" : ""}>
-          <LinkIcon /> {copied ? "Link copied" : "Copy link"}
+        <button onClick={copyLink}>
+          <LinkIcon /> Copy link
         </button>
       </div>
-      <p className="mt-3 min-h-5 text-center text-xs text-stone" aria-live="polite">
-        {note}
-      </p>
+      <div className={toast ? "toast is-visible" : "toast"} role="status" aria-live="polite">
+        {toast}
+      </div>
     </>
   );
 }

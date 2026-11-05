@@ -818,3 +818,57 @@
 }
 
 
+
+.page-graveyard .graveyard-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 auto 22px;
+  max-width: 1120px;
+  padding: 0 24px;
+}
+
+.page-graveyard .graveyard-tab {
+  border: 1px solid rgba(238, 233, 223, 0.18);
+  background: rgba(13, 9, 20, 0.6);
+  color: var(--stone);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.page-graveyard .graveyard-tab:hover,
+.page-graveyard .graveyard-tab:focus-visible {
+  color: var(--pale);
+  border-color: rgba(211, 154, 71, 0.6);
+}
+
+.page-graveyard .graveyard-tab.active {
+  color: var(--night);
+  background: var(--amber);
+  border-color: var(--amber);
+}
+
+.page-graveyard .stone-stars {
+  margin-left: 10px;
+  opacity: 0.8;
+}
+
+.page-graveyard .empty-link {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .page-graveyard .graveyard-tab { font-size: 11px; padding: 9px 12px; }
+}

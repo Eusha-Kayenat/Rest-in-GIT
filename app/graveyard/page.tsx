@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import { GraveyardBrowser } from "@/components/graveyard/GraveyardBrowser";
+import { GraveyardStats } from "@/components/graveyard/GraveyardStats";
 import { Header } from "@/components/Header";
-import { sampleGraveyard } from "@/lib/sample-data";
+import { loadFamousGraves, loadMostMourned } from "@/lib/graveyard";
 import "../styles/graveyard.css";
 
 export const metadata: Metadata = { title: "The Graveyard · Rest-in-GIT" };
+export const dynamic = "force-dynamic";
 
-export default function GraveyardPage() {
-  const candles = sampleGraveyard.reduce((sum, entry) => sum + entry.candles, 0);
+export default async function GraveyardPage() {
+  const [famous, mourned] = await Promise.all([loadFamousGraves(), loadMostMourned()]);
   return (
     <div className="page-graveyard">
       <div className="app-shell">
@@ -24,17 +26,9 @@ export default function GraveyardPage() {
               Here lie the repositories we loved, shipped,
               <br className="desktop-break" /> and quietly forgot.
             </p>
-            <div className="graveyard-stats" aria-label="Graveyard statistics">
-              <span>
-                <strong>{sampleGraveyard.length.toLocaleString("en-US")}</strong> repos buried
-              </span>
-              <i />
-              <span>
-                <strong>{candles.toLocaleString("en-US")}</strong> candles lit
-              </span>
-            </div>
+            <GraveyardStats buried={new Set([...famous, ...mourned].map((e) => `${e.owner}/${e.repo}`)).size} />
           </section>
-          <GraveyardBrowser entries={sampleGraveyard} />
+          <GraveyardBrowser famous={famous} mourned={mourned} />
         </main>
         <Footer variant="graveyard" />
       </div>
