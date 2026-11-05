@@ -34,6 +34,6 @@ export type GraveyardEntry = {
   died: number;
   language: string;
   lastWords: string;
-  cause: "archived" | "dormant";
-  candles: number;
+  cause: TombstoneStatus;
+  stars: number;
 };

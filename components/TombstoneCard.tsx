@@ -26,7 +26,7 @@ function Survivors({ logins }: { logins: string[] }) {
           <Image
             key={login}
             src={`https://avatars.githubusercontent.com/${login}?s=96`}
-            alt={login}
+            alt={`GitHub avatar of ${login}`}
             title={login}
             width={96}
             height={96}
@@ -37,7 +37,9 @@ function Survivors({ logins }: { logins: string[] }) {
   );
 }
 
-export function TombstoneCard({ facts, epitaph }: { facts: RepoFacts; epitaph: ReactNode }) {
+type TombstoneCardProps = { facts: RepoFacts; epitaph: ReactNode; verdict?: ReactNode };
+
+export function TombstoneCard({ facts, epitaph, verdict }: TombstoneCardProps) {
   const { owner, repo, born, died, lastWords, status, survivedBy } = facts;
   return (
     <article className="tombstone" aria-label={`Tombstone memorial for ${repo}`}>
@@ -70,6 +72,7 @@ export function TombstoneCard({ facts, epitaph }: { facts: RepoFacts; epitaph: R
             <span aria-hidden="true">†</span> Last words <span aria-hidden="true">†</span>
           </p>
           <blockquote>{status === "never-lived" ? lastWords : `“${lastWords}”`}</blockquote>
+          {verdict}
         </div>
 
         <div className="epitaph">{epitaph}</div>

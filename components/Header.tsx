@@ -14,8 +14,9 @@ function HomeHeader() {
         <strong>GIT</strong>
       </Link>
       <nav className="flex items-center gap-3">
-        <Link className="github-link" href="/graveyard">
-          <span>Graveyard</span>
+        <Link className="graveyard-link" href="/graveyard">
+          <span aria-hidden="true">✝</span>
+          <span><span className="graveyard-the">The </span>Graveyard</span>
         </Link>
         <a className="github-link" href={REPO_URL} target="_blank" rel="noreferrer">
           <GithubMark />
@@ -56,9 +57,14 @@ function ResultHeader() {
         <span>Rest-in-</span>
         <i>GIT</i>
       </Link>
-      <Link className="bury-link" href="/">
-        <span aria-hidden="true">+</span> Bury another repo
-      </Link>
+      <nav className="result-nav">
+        <Link className="graveyard-link" href="/graveyard">
+          <span aria-hidden="true">✝</span> The Graveyard
+        </Link>
+        <Link className="bury-link" href="/">
+          <span aria-hidden="true">+</span> Bury another repo
+        </Link>
+      </nav>
     </header>
   );
 }

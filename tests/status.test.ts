@@ -25,6 +25,15 @@ describe("deriveStatus", () => {
     );
   });
 
+  it("turns dead exactly on the calendar anniversary", () => {
+    const anniversary = new Date("2026-11-05T14:00:00Z");
+    expect(deriveStatus({ archived: false, lastCommit: "2025-11-05T14:00:00Z", now: anniversary }).status).toBe("dead");
+    expect(deriveStatus({ archived: false, lastCommit: "2025-11-05T14:00:01Z", now: anniversary }).status).toBe("alive");
+    const leapAnniversary = new Date("2025-02-28T00:00:00Z");
+    expect(deriveStatus({ archived: false, lastCommit: "2024-02-28T00:00:00Z", now: leapAnniversary }).status).toBe("dead");
+    expect(deriveStatus({ archived: false, lastCommit: "2024-02-29T00:00:00Z", now: leapAnniversary }).status).toBe("alive");
+  });
+
   it("recent commit is alive", () => {
     expect(deriveStatus({ archived: false, lastCommit: "2026-06-01T00:00:00Z", now }).status).toBe("alive");
   });
