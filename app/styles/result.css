@@ -742,3 +742,35 @@
   .page-result .rotating-message span { animation: none; }
   .page-result .rotating-message span:first-child { opacity: 1; }
 }
+
+.page-result .toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 50;
+  padding: 10px 18px;
+  border: 1px solid rgba(211, 154, 71, 0.55);
+  border-radius: 4px;
+  background: var(--night);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  color: var(--pale);
+  max-width: calc(100vw - 32px);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.page-result .toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.page-result .actions button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}

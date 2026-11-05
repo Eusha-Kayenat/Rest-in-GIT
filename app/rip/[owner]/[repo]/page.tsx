@@ -77,7 +77,8 @@ export async function generateMetadata({ params, searchParams }: { params: Param
 }
 
 function Memorial({ facts, style }: { facts: RepoFacts; style: EpitaphStyle }) {
-  const shareText = `RIP ${facts.repo}, ${yearOf(facts.born)}–${yearOf(facts.died)}. Last words: “${facts.lastWords}”`;
+  const shareText = `RIP ${facts.repo} (${yearOf(facts.born)}-${yearOf(facts.died)}). Last words: "${facts.lastWords}"`;
+  const cardUrl = `/api/card/${encodeURIComponent(facts.owner)}/${encodeURIComponent(facts.repo)}?s=${encodeURIComponent(style)}`;
   return (
     <>
       <p className="death-notice">{deathNotice(facts)}</p>
@@ -95,7 +96,7 @@ function Memorial({ facts, style }: { facts: RepoFacts; style: EpitaphStyle }) {
         }
       />
       <Rituals owner={facts.owner} repo={facts.repo} style={style} />
-      <ShareActions shareText={shareText} />
+      <ShareActions repo={facts.repo} shareText={shareText} cardUrl={cardUrl} />
       <FactJokes facts={facts} />
       <p className="permalink">
         {siteHost()}/rip/{facts.owner}/{facts.repo}
