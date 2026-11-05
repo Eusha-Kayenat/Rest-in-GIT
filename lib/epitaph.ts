@@ -103,7 +103,19 @@ function asSpeculation(text: string): string {
   return /^speculation:/i.test(text) ? text : `Speculation: ${text}`;
 }
 
-function fallbackAutopsy(f: RepoFacts): string {
+const STYLE_SIGN_OFF: Record<EpitaphStyle, string> = {
+  classic: "",
+  shakespearean: " Alas, poor repo, we knew it well.",
+  "noir detective": " Case closed. The dame was technical debt.",
+  "nature documentary": " Here, in the wild, only the starred survive.",
+  "disappointed parent": " We are not angry, just disappointed.",
+};
+
+function fallbackAutopsy(f: RepoFacts, style: EpitaphStyle): string {
+  return autopsyFindings(f) + STYLE_SIGN_OFF[style];
+}
+
+function autopsyFindings(f: RepoFacts): string {
   if (f.status === "alive") {
     return `Speculation: no cause of death found, the patient committed as recently as ${f.died.slice(0, 10)}. The casket stays closed for now.`;
   }
@@ -121,32 +133,35 @@ const AUTOPSY_TASK: Record<RepoFacts["status"], string> = {
   "never-lived": "guess why this repository never received a single commit",
 };
 
-export function autopsy(facts: RepoFacts): Promise<AiText> {
+export function autopsy(facts: RepoFacts, style: EpitaphStyle = "classic"): Promise<AiText> {
   const prompt = `TASK: autopsy
-In exactly 2 sentences, ${AUTOPSY_TASK[facts.status]}. Begin with "Speculation:". ${RULES}
+In exactly 2 sentences, ${AUTOPSY_TASK[facts.status]}. Write it in the "${style}" style. Begin with "Speculation:". ${RULES}
 
 Facts:
 ${factsBlock(facts)}`;
-  return cached(["autopsy", facts.owner, facts.repo, factsFingerprint(facts)], async () => {
+  return cached(["autopsy", facts.owner, facts.repo, style, factsFingerprint(facts)], async () => {
     const text = await tryModel(() => generate({ prompt }));
-    return text ? { text: asSpeculation(text), fromModel: true } : { text: fallbackAutopsy(facts), fromModel: false };
+    return text ? { text: asSpeculation(text), fromModel: true } : { text: fallbackAutopsy(facts, style), fromModel: false };
   });
 }
 
-function fallbackSeance(f: RepoFacts): string {
+function fallbackSeance(f: RepoFacts, style: EpitaphStyle): string {
   const mourners = f.stars === 1 ? "one soul still remembers" : `${f.stars.toLocaleString("en-US")} souls still remember`;
-  if (f.status === "never-lived") return `I was ${f.repo}. I never said a word, yet ${mourners} me.`;
-  return `I was ${f.repo}. My last words were "${f.lastWords}", and ${mourners} me.`;
+  const message =
+    f.status === "never-lived"
+      ? `I was ${f.repo}. I never said a word, yet ${mourners} me.`
+      : `I was ${f.repo}. My last words were "${f.lastWords}", and ${mourners} me.`;
+  return message + STYLE_SIGN_OFF[style];
 }
 
-export function seance(facts: RepoFacts): Promise<AiText> {
+export function seance(facts: RepoFacts, style: EpitaphStyle = "classic"): Promise<AiText> {
   const prompt = `TASK: seance
-You are the ghost of this repository. Speak one short first-person message (max 3 sentences) to the living, using only these facts. ${RULES}
+You are the ghost of this repository. Speak one short first-person message (max 3 sentences) to the living in the "${style}" style, using only these facts. ${RULES}
 
 Facts:
 ${factsBlock(facts)}`;
-  return cached(["seance", facts.owner, facts.repo, factsFingerprint(facts)], async () => {
+  return cached(["seance", facts.owner, facts.repo, style, factsFingerprint(facts)], async () => {
     const text = await tryModel(() => generate({ prompt }));
-    return text ? { text, fromModel: true } : { text: fallbackSeance(facts), fromModel: false };
+    return text ? { text, fromModel: true } : { text: fallbackSeance(facts, style), fromModel: false };
   });
 }
