@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
 const MESSAGES = [
   "Consulting the spirits…",
   "Carving the stone…",
@@ -11,14 +7,13 @@ const MESSAGES = [
 ];
 
 export function RotatingMessage() {
-  const [index, setIndex] = useState(0);
-  useEffect(() => {
-    const timer = window.setInterval(() => setIndex((i) => (i + 1) % MESSAGES.length), 1600);
-    return () => window.clearInterval(timer);
-  }, []);
   return (
-    <p role="status" aria-live="polite">
-      {MESSAGES[index]}
+    <p className="rotating-message" role="status" aria-label="Carving the epitaph">
+      {MESSAGES.map((message, index) => (
+        <span key={message} style={{ animationDelay: `${index * 1.6}s` }} aria-hidden="true">
+          {message}
+        </span>
+      ))}
     </p>
   );
 }
