@@ -3,6 +3,7 @@ import { getRepoFacts, GraveError } from "../lib/github";
 
 const repoPayload = {
   name: "ghost",
+  private: false,
   owner: { login: "spooky" },
   description: null,
   created_at: "2020-01-01T00:00:00Z",
@@ -47,6 +48,28 @@ describe("getRepoFacts", () => {
   it("throws a not-found grave error on 404", async () => {
     mockGithub({ repo: json({}, 404), commits: json({}, 404), contributors: json({}, 404) });
     await expect(getRepoFacts("spooky", "nothing")).rejects.toMatchObject({ kind: "not-found" });
+  });
+
+  it("hides private repositories", async () => {
+    mockGithub({ repo: json({ ...repoPayload, private: true }), commits: json([]), contributors: json([]) });
+    await expect(getRepoFacts("spooky", "secret")).rejects.toMatchObject({ kind: "not-found" });
+  });
+
+  it("treats a secondary rate limit as rate-limited", async () => {
+    const limited = () => json({ message: "You have exceeded a secondary rate limit." }, 403, { "x-ratelimit-remaining": "4000" });
+    mockGithub({ repo: limited(), commits: limited(), contributors: limited() });
+    await expect(getRepoFacts("spooky", "ghost")).rejects.toMatchObject({ kind: "rate-limited" });
+  });
+
+  it("still buries the repo when only contributors are rate-limited", async () => {
+    mockGithub({
+      repo: json(repoPayload),
+      commits: json([{ commit: { message: "wip", committer: { date: "2021-01-01T00:00:00Z" }, author: null } }]),
+      contributors: json({}, 429),
+    });
+    const facts = await getRepoFacts("spooky", "ghost");
+    expect(facts.survivedBy).toEqual([]);
+    expect(facts.lastWords).toBe("wip");
   });
 
   it("throws a rate-limited grave error", async () => {
