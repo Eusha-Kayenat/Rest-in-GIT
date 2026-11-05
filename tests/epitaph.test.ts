@@ -69,6 +69,14 @@ describe("with a healthy model", () => {
     });
   });
 
+  it("writes the autopsy and seance in the chosen style", async () => {
+    const classic = await autopsy(facts, "classic");
+    const noir = await autopsy(facts, "noir detective");
+    expect(noir.text).not.toBe(classic.text);
+    expect(noir.text).toMatch(/^Speculation:.*Case closed/);
+    expect((await seance(facts, "shakespearean")).text).toMatch(/Alas/);
+  });
+
   it("labels the autopsy as speculation and holds a seance", async () => {
     expect((await autopsy(facts)).text).toMatch(/^Speculation:/);
     expect((await seance(facts)).fromModel).toBe(true);
