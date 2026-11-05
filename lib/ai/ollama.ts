@@ -2,7 +2,7 @@ const DEFAULT_TIMEOUT_MS = 5000;
 
 function timeoutMs(): number {
   const value = Number(process.env.OLLAMA_TIMEOUT_MS);
-  return Number.isFinite(value) && value > 0 ? value : DEFAULT_TIMEOUT_MS;
+  return Number.isFinite(value) && value > 0 ? Math.ceil(value) : DEFAULT_TIMEOUT_MS;
 }
 
 type GenerateOptions = { prompt: string; format?: "json" };
