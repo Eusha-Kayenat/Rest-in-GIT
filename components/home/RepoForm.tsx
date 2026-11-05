@@ -2,11 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
-import { toRepoPath, type RepoPath } from "@/lib/repo-path";
+import { parseRepoUrl, type RepoRef } from "@/lib/repo-url";
 import { GithubMark } from "../icons";
 import { MiniTombstone } from "./MiniTombstone";
 
-const EXAMPLES: RepoPath[] = [
+const EXAMPLES: RepoRef[] = [
   { owner: "atom", repo: "atom" },
   { owner: "adobe", repo: "brackets" },
   { owner: "request", repo: "request" },
@@ -18,7 +18,7 @@ export function RepoForm() {
   const [message, setMessage] = useState("");
   const [isDigging, startDigging] = useTransition();
 
-  const visit = ({ owner, repo }: RepoPath) => {
+  const visit = ({ owner, repo }: RepoRef) => {
     startDigging(() => router.push(`/rip/${owner}/${repo}`));
   };
 
@@ -28,7 +28,7 @@ export function RepoForm() {
       setMessage("The gravedigger needs a repository first.");
       return;
     }
-    const path = toRepoPath(repoUrl);
+    const path = parseRepoUrl(repoUrl);
     if (!path) {
       setMessage("That plot is unmarked. Try github.com/owner/repo.");
       return;

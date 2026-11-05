@@ -1,54 +1,6 @@
-import type { GraveyardEntry, Survivor, Tombstone } from "./types";
+import type { GraveyardEntry } from "./types";
 
-// Hard-coded sample data for the M1 UI shell. Replaced by live GitHub data in M2.
-
-const avatar = (login: string): Survivor => ({
-  login,
-  avatarUrl: `https://avatars.githubusercontent.com/${login}?s=96`,
-});
-
-const sampleTombstones: Tombstone[] = [
-  {
-    owner: "request",
-    repo: "request",
-    description: "Simplified HTTP request client.",
-    bornAt: "2011-01-23T00:00:00Z",
-    diedAt: "2020-02-11T00:00:00Z",
-    lastWords: "README: typo in deprecation message (#3268)",
-    survivedBy: [avatar("mikeal"), avatar("simov"), avatar("nylen")],
-    cause: "dormant",
-    epitaph: ["It asked the whole web for everything,", "and finally got a quiet reply."],
-  },
-  {
-    owner: "atom",
-    repo: "atom",
-    description: "The hackable text editor",
-    bornAt: "2012-01-20T00:00:00Z",
-    diedAt: "2022-11-22T00:00:00Z",
-    lastWords: "Merge pull request #25709 from atom/fix-snapshot-result-macos",
-    survivedBy: [avatar("kevinsawicki"), avatar("benogle"), avatar("maxbrunsfeld")],
-    cause: "archived",
-    epitaph: ["Endlessly hackable, endlessly loved,", "now hacked into the stone above."],
-  },
-  {
-    owner: "adobe",
-    repo: "brackets",
-    description: "An open source code editor for the web",
-    bornAt: "2011-12-07T00:00:00Z",
-    diedAt: "2021-03-18T00:00:00Z",
-    lastWords: "Change hyperlink",
-    survivedBy: [avatar("redmunds"), avatar("jasonsanjose"), avatar("peterflynn")],
-    cause: "archived",
-    epitaph: ["It opened every bracket we gave it,", "and finally closed its own."],
-  },
-];
-
-export function getSampleTombstone(owner: string, repo: string): Tombstone {
-  const match = sampleTombstones.find(
-    (t) => t.owner.toLowerCase() === owner.toLowerCase() && t.repo.toLowerCase() === repo.toLowerCase(),
-  );
-  return match ?? { ...sampleTombstones[0], owner, repo };
-}
+// Hard-coded graveyard entries until the curated list lands in M6.
 
 export const sampleGraveyard: GraveyardEntry[] = [
   { owner: "request", repo: "request", description: "Simplified HTTP request client", born: 2011, died: 2020, language: "JavaScript", lastWords: "README: typo in deprecation message (#3268)", cause: "dormant", candles: 1284 },
