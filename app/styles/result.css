@@ -722,3 +722,23 @@
 }
 
 
+
+.page-result .rotating-message {
+  display: grid;
+}
+
+.page-result .rotating-message span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  animation: rig-rotate-message 8s infinite both;
+}
+
+@keyframes rig-rotate-message {
+  0%, 20%, 100% { opacity: 0; }
+  2%, 18% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-result .rotating-message span { animation: none; }
+  .page-result .rotating-message span:first-child { opacity: 1; }
+}

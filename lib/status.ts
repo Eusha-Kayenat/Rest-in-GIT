@@ -13,13 +13,22 @@ export function yearsBetween(from: string, to: Date): number {
   return (to.getTime() - new Date(from).getTime()) / YEAR_MS;
 }
 
+export function completedYears(from: string, to: Date): number {
+  const start = new Date(from);
+  let years = to.getUTCFullYear() - start.getUTCFullYear();
+  const anniversary = new Date(start);
+  anniversary.setUTCFullYear(start.getUTCFullYear() + years);
+  if (anniversary > to) years -= 1;
+  return Math.max(0, years);
+}
+
 export function deriveStatus({ archived, lastCommit, now = new Date() }: StatusInput): {
   status: TombstoneStatus;
   causeOfDeath: string;
 } {
   if (archived) return { status: "archived", causeOfDeath: "Archived by its maintainers" };
   if (!lastCommit) return { status: "never-lived", causeOfDeath: "Never drew a single breath" };
-  const years = Math.floor(yearsBetween(lastCommit, now));
+  const years = completedYears(lastCommit, now);
   if (years >= 1) return { status: "dead", causeOfDeath: `Dormant for ${years} year${years === 1 ? "" : "s"}` };
   return { status: "alive", causeOfDeath: "Still breathing" };
 }

@@ -23,6 +23,7 @@ export class GraveError extends Error {
 
 type RepoPayload = {
   name: string;
+  private: boolean;
   owner: { login: string };
   description: string | null;
   created_at: string;
@@ -48,20 +49,26 @@ function githubHeaders(): Record<string, string> {
   return headers;
 }
 
-function isRateLimited(res: Response): boolean {
-  return res.status === 429 || (res.status === 403 && res.headers.get("x-ratelimit-remaining") === "0");
+async function isRateLimited(res: Response): Promise<boolean> {
+  if (res.status === 429) return true;
+  if (res.status !== 403) return false;
+  if (res.headers.get("x-ratelimit-remaining") === "0" || res.headers.has("retry-after")) return true;
+  const body = await res.clone().text().catch(() => "");
+  return /rate limit/i.test(body);
 }
 
 async function github(path: string): Promise<Response> {
   const res = await fetch(`${API}${path}`, { headers: githubHeaders(), next: { revalidate: 3600 } });
-  if (isRateLimited(res)) throw new GraveError("rate-limited");
+  if (await isRateLimited(res)) throw new GraveError("rate-limited");
   return res;
 }
 
 async function readRepo(res: Response): Promise<RepoPayload> {
   if (res.status === 404) throw new GraveError("not-found");
   if (!res.ok) throw new GraveError("unknown");
-  return res.json();
+  const payload: RepoPayload = await res.json();
+  if (payload.private) throw new GraveError("not-found");
+  return payload;
 }
 
 async function readLastCommit(res: Response): Promise<CommitPayload | null> {
@@ -71,8 +78,8 @@ async function readLastCommit(res: Response): Promise<CommitPayload | null> {
   return commits[0] ?? null;
 }
 
-async function readContributors(res: Response): Promise<string[]> {
-  if (res.status === 204 || !res.ok) return [];
+async function readContributors(res: Response | null): Promise<string[]> {
+  if (!res || res.status === 204 || !res.ok) return [];
   const contributors: ContributorPayload[] = await res.json();
   return contributors.flatMap((c) => (c.login ? [c.login] : [])).slice(0, 3);
 }
@@ -82,7 +89,7 @@ export async function getRepoFacts(owner: string, repo: string, now = new Date()
   const [repoRes, commitsRes, contributorsRes] = await Promise.all([
     github(base),
     github(`${base}/commits?per_page=1`),
-    github(`${base}/contributors?per_page=3`),
+    github(`${base}/contributors?per_page=3`).catch(() => null),
   ]);
   const payload = await readRepo(repoRes);
   const lastCommit = await readLastCommit(commitsRes);
