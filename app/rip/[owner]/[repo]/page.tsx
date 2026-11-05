@@ -47,13 +47,33 @@ function deathNotice(facts: RepoFacts): string {
   return `${facts.causeOfDeath}. Declared dead after ${days} days of silence`;
 }
 
-function siteHost(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "rest-in-git").replace(/^https?:\/\//, "");
+function siteUrl(): string {
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 }
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+function siteHost(): string {
+  return siteUrl().replace(/^https?:\/\//, "");
+}
+
+export async function generateMetadata({ params, searchParams }: { params: Params; searchParams: SearchParams }): Promise<Metadata> {
   const { owner, repo } = await params;
-  return { title: `RIP ${owner}/${repo} · Rest-in-GIT` };
+  const { style } = await searchParams;
+  const styleQuery = typeof style === "string" ? `?s=${encodeURIComponent(toEpitaphStyle(style))}` : "";
+  const card = {
+    url: `/api/card/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}${styleQuery}`,
+    width: 1200,
+    height: 630,
+    alt: `Tombstone card for ${owner}/${repo}`,
+  };
+  const title = `RIP ${repo} | Rest-in-GIT`;
+  const description = `The tombstone of ${owner}/${repo}. Every repo has last words.`;
+  return {
+    metadataBase: new URL(siteUrl()),
+    title,
+    description,
+    openGraph: { title, description, type: "website", images: [card] },
+    twitter: { card: "summary_large_image", title, description, images: [card] },
+  };
 }
 
 function Memorial({ facts, style }: { facts: RepoFacts; style: EpitaphStyle }) {
