@@ -37,6 +37,7 @@ No Ollama? Run `npm run mock:ollama` in another terminal to start a small stand-
 | `GITHUB_TOKEN` | GitHub personal access token with no extra scopes (public data only). Used server-side only. Optional, but without it GitHub allows only 60 requests an hour. |
 | `OLLAMA_URL` | Base URL of the Ollama server, default `http://localhost:11434`. |
 | `EPITAPH_MODEL` | Ollama model used for all AI text, default `gemma4:e4b`. |
+| `OLLAMA_TIMEOUT_MS` | How long to wait for the model before using stock text, default `5000`. Raise it when running on CPU. |
 | `NEXT_PUBLIC_SITE_URL` | Public URL of the site, used for share links and Open Graph card images. |
 
 ## The open-weight model

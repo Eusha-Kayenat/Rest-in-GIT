@@ -1,4 +1,9 @@
-const TIMEOUT_MS = 5000;
+const DEFAULT_TIMEOUT_MS = 5000;
+
+function timeoutMs(): number {
+  const value = Number(process.env.OLLAMA_TIMEOUT_MS);
+  return Number.isFinite(value) && value > 0 ? value : DEFAULT_TIMEOUT_MS;
+}
 
 type GenerateOptions = { prompt: string; format?: "json" };
 
@@ -12,11 +17,12 @@ export async function generate({ prompt, format }: GenerateOptions): Promise<str
       prompt,
       stream: false,
       keep_alive: "30m",
+      think: false,
       options: { temperature: 0.9 },
       ...(format ? { format } : {}),
     }),
     cache: "no-store",
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs()),
   });
   if (!res.ok) throw new Error(`Ollama answered ${res.status}`);
   const data: { response?: unknown } = await res.json();
