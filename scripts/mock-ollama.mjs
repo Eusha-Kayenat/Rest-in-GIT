@@ -12,6 +12,17 @@ const REPLIES = {
   classify: JSON.stringify({ category: "Humble", joke: "Even in death, it fixed one more typo." }),
 };
 
+const STYLE_TAGS = {
+  shakespearean: "Alas, poor repo, we knew it well.",
+  "noir detective": "Case closed. The dame was technical debt.",
+  "nature documentary": "Here, in the wild, only the starred survive.",
+  "disappointed parent": "We are not angry, just disappointed.",
+};
+
+function styleOf(prompt) {
+  return /"([a-z ]+)" style/.exec(prompt)?.[1] ?? "classic";
+}
+
 function taskOf(prompt) {
   const match = /^TASK: (\w+)/.exec(prompt);
   return match?.[1] ?? "epitaph";
@@ -19,7 +30,12 @@ function taskOf(prompt) {
 
 function reply(body) {
   if (body.model === "mock-broken-json") return "definitely not { json";
-  return REPLIES[taskOf(body.prompt ?? "")] ?? REPLIES.epitaph;
+  const prompt = body.prompt ?? "";
+  const task = taskOf(prompt);
+  const base = REPLIES[task] ?? REPLIES.epitaph;
+  const tag = STYLE_TAGS[styleOf(prompt)];
+  if (!tag || task === "classify") return base;
+  return task === "epitaph" ? `${base.split("\n")[0]}\n${tag}` : `${base} ${tag}`;
 }
 
 export function createMockOllama() {
