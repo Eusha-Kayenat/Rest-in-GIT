@@ -1,12 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useStore } from "@/lib/browser-store";
+import { myGravesStore, NO_GRAVES } from "@/lib/graveyard-storage";
 import type { GraveyardEntry } from "@/lib/types";
 import { GraveCard } from "../GraveCard";
 import { SearchIcon } from "../icons";
 
 const ALL_LANGUAGES = "All";
 const ALL_YEARS = "All years";
+const TABS = [
+  { id: "famous", label: "Famous" },
+  { id: "mourned", label: "Most mourned" },
+  { id: "mine", label: "Your graveyard" },
+] as const;
+type TabId = (typeof TABS)[number]["id"];
 
 function decadeOf(year: number): string {
   return `${Math.floor(year / 10) * 10}s`;
@@ -53,7 +62,10 @@ function ChipGroup({
   );
 }
 
-export function GraveyardBrowser({ entries }: { entries: GraveyardEntry[] }) {
+export function GraveyardBrowser({ famous, mourned }: { famous: GraveyardEntry[]; mourned: GraveyardEntry[] }) {
+  const [tab, setTab] = useState<TabId>("famous");
+  const mine = useStore(myGravesStore, NO_GRAVES);
+  const entries = tab === "famous" ? famous : tab === "mourned" ? mourned : mine;
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState(ALL_LANGUAGES);
   const [decade, setDecade] = useState(ALL_YEARS);
@@ -78,8 +90,26 @@ export function GraveyardBrowser({ entries }: { entries: GraveyardEntry[] }) {
     setDecade(ALL_YEARS);
   };
 
+  const switchTab = (next: TabId) => {
+    setTab(next);
+    clearFilters();
+  };
+
   return (
     <>
+      <div className="graveyard-tabs" role="tablist" aria-label="Graveyard sections">
+        {TABS.map((item) => (
+          <button
+            key={item.id}
+            role="tab"
+            aria-selected={tab === item.id}
+            className={tab === item.id ? "graveyard-tab active" : "graveyard-tab"}
+            onClick={() => switchTab(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
       <section className="filters" aria-label="Search and filter repositories">
         <div className="search-wrap">
           <SearchIcon />
@@ -99,7 +129,9 @@ export function GraveyardBrowser({ entries }: { entries: GraveyardEntry[] }) {
       </section>
 
       <div className="results-heading">
-        <span>{filtered.length} resting places</span>
+        <span>
+          {filtered.length} resting places{tab === "mine" ? " · kept in this browser only" : ""}
+        </span>
         {isFiltered && <button onClick={clearFilters}>Clear filters</button>}
       </div>
 
@@ -108,6 +140,21 @@ export function GraveyardBrowser({ entries }: { entries: GraveyardEntry[] }) {
           {filtered.map((entry) => (
             <GraveCard key={`${entry.owner}/${entry.repo}`} entry={entry} />
           ))}
+        </section>
+      ) : tab === "mine" && entries.length === 0 ? (
+        <section className="empty-state">
+          <div className="empty-stone">∅</div>
+          <h2>Your graveyard is empty</h2>
+          <p>Tombstones you carve in this browser are kept here. Nothing leaves your machine.</p>
+          <Link className="empty-link" href="/">
+            Bury a repo
+          </Link>
+        </section>
+      ) : entries.length === 0 ? (
+        <section className="empty-state">
+          <div className="empty-stone">?</div>
+          <h2>The gravedigger is resting</h2>
+          <p>GitHub did not answer. Try the other sections or come back later.</p>
         </section>
       ) : (
         <section className="empty-state">

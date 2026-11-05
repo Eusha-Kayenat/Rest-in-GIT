@@ -9,10 +9,12 @@ import { GraveMessage } from "@/components/result/GraveMessage";
 import { LastWordsVerdict } from "@/components/result/LastWordsVerdict";
 import { Rituals } from "@/components/result/Rituals";
 import { RotatingMessage } from "@/components/result/RotatingMessage";
+import { RememberGrave } from "@/components/result/RememberGrave";
 import { ShareActions } from "@/components/result/ShareActions";
 import { TombstoneCard } from "@/components/TombstoneCard";
 import { daysBetween, yearOf } from "@/lib/dates";
 import { toEpitaphStyle, type EpitaphStyle } from "@/lib/epitaph";
+import { toGraveyardEntry } from "@/lib/graveyard-entry";
 import { getCachedRepoFacts, GraveError, type GraveErrorKind } from "@/lib/github";
 import { ALIVE_MESSAGE } from "@/lib/status";
 import type { RepoFacts } from "@/lib/types";
@@ -96,7 +98,10 @@ function Memorial({ facts, style }: { facts: RepoFacts; style: EpitaphStyle }) {
         }
       />
       <Rituals owner={facts.owner} repo={facts.repo} style={style} />
-      <ShareActions repo={facts.repo} shareText={shareText} cardUrl={cardUrl} />
+      <>
+        <RememberGrave entry={toGraveyardEntry(facts)} />
+        <ShareActions repo={facts.repo} shareText={shareText} cardUrl={cardUrl} />
+      </>
       <FactJokes facts={facts} />
       <p className="permalink">
         {siteHost()}/rip/{facts.owner}/{facts.repo}

@@ -57,8 +57,8 @@ async function isRateLimited(res: Response): Promise<boolean> {
   return /rate limit/i.test(body);
 }
 
-async function github(path: string): Promise<Response> {
-  const res = await fetch(`${API}${path}`, { headers: githubHeaders(), next: { revalidate: 3600 } });
+async function github(path: string, revalidate = 3600): Promise<Response> {
+  const res = await fetch(`${API}${path}`, { headers: githubHeaders(), next: { revalidate } });
   if (await isRateLimited(res)) throw new GraveError("rate-limited");
   return res;
 }
@@ -84,12 +84,12 @@ async function readContributors(res: Response | null): Promise<string[]> {
   return contributors.flatMap((c) => (c.login ? [c.login] : [])).slice(0, 3);
 }
 
-export async function getRepoFacts(owner: string, repo: string, now = new Date()): Promise<RepoFacts> {
+export async function getRepoFacts(owner: string, repo: string, now = new Date(), revalidate = 3600): Promise<RepoFacts> {
   const base = `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
   const [repoRes, commitsRes, contributorsRes] = await Promise.all([
-    github(base),
-    github(`${base}/commits?per_page=1`),
-    github(`${base}/contributors?per_page=3`).catch(() => null),
+    github(base, revalidate),
+    github(`${base}/commits?per_page=1`, revalidate),
+    github(`${base}/contributors?per_page=3`, revalidate).catch(() => null),
   ]);
   const payload = await readRepo(repoRes);
   const lastCommit = await readLastCommit(commitsRes);
@@ -120,3 +120,10 @@ export async function getRepoFacts(owner: string, repo: string, now = new Date()
 }
 
 export const getCachedRepoFacts = cache((owner: string, repo: string) => getRepoFacts(owner, repo));
+
+export async function searchArchivedRepos(limit = 12): Promise<{ owner: string; repo: string }[]> {
+  const res = await github(`/search/repositories?q=${encodeURIComponent("archived:true stars:>5000")}&sort=stars&order=desc&per_page=${limit}`, 86400);
+  if (!res.ok) throw new GraveError("unknown");
+  const body: { items: { name: string; owner: { login: string } }[] } = await res.json();
+  return body.items.map((item) => ({ owner: item.owner.login, repo: item.name }));
+}
