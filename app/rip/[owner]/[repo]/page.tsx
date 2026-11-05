@@ -44,7 +44,7 @@ async function loadFacts(owner: string, repo: string): Promise<FactsResult> {
 function deathNotice(facts: RepoFacts): string {
   const days = daysBetween(new Date(facts.died), new Date()).toLocaleString("en-US");
   if (facts.status === "alive") return ALIVE_MESSAGE;
-  if (facts.status === "never-lived") return "It never drew a single breath. Not one commit.";
+  if (facts.status === "never-lived") return "Never lived. Not a single commit was ever made.";
   if (facts.status === "archived") return `Archived by its maintainers. ${days} days since its last words`;
   return `${facts.causeOfDeath}. Declared dead after ${days} days of silence`;
 }
@@ -84,6 +84,7 @@ function Memorial({ facts, style }: { facts: RepoFacts; style: EpitaphStyle }) {
   return (
     <>
       <p className="death-notice">{deathNotice(facts)}</p>
+      {facts.stars === 0 && <p className="death-notice easter-egg">Nobody came to the funeral.</p>}
       <TombstoneCard
         facts={facts}
         epitaph={

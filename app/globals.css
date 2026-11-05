@@ -43,3 +43,104 @@
     background: var(--pale);
   }
 }
+
+.route-state {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 32px 24px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 30%, #1d1528 0%, var(--night) 65%);
+  color: var(--pale);
+  font-family: var(--font-mono);
+}
+
+.route-state h1 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 600;
+}
+
+.route-state p {
+  margin: 0;
+  max-width: 440px;
+  color: #c9c3b8;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.route-state-stone {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 92px;
+  border-radius: 36px 36px 6px 6px;
+  background: var(--stone);
+  color: var(--night);
+  font-size: 30px;
+}
+
+.route-state-candle {
+  position: relative;
+  width: 14px;
+  height: 46px;
+  border-radius: 3px;
+  background: var(--pale);
+}
+
+.route-state-candle span {
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  width: 12px;
+  height: 18px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: var(--amber);
+  box-shadow: 0 0 24px var(--amber);
+  transform: translateX(-50%);
+  animation: route-flicker 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes route-flicker {
+  from { opacity: 0.7; transform: translateX(-50%) scale(0.92); }
+  to { opacity: 1; transform: translateX(-50%) scale(1.05); }
+}
+
+.route-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.route-state-actions button,
+.route-state-actions a {
+  padding: 10px 16px;
+  border: 1px solid rgba(211, 154, 71, 0.6);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--pale);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.route-state-actions button:hover,
+.route-state-actions a:hover,
+.route-state-actions button:focus-visible,
+.route-state-actions a:focus-visible {
+  border-color: var(--amber);
+  color: var(--amber);
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-state-candle span { animation: none; }
+}

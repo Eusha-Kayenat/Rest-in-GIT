@@ -16,6 +16,7 @@ export type CardData = {
   category: string;
   status: TombstoneStatus;
   survivedBy: string[];
+  stars: number;
 };
 
 type CardOverrides = { epitaph: string | null; category: string | null; style: EpitaphStyle };
@@ -40,5 +41,6 @@ export async function buildCardData(owner: string, repo: string, overrides: Card
     category: truncate(category, 40),
     status: facts.status,
     survivedBy: facts.survivedBy,
+    stars: facts.stars,
   };
 }

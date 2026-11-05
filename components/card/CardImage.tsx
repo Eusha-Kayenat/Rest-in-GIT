@@ -126,7 +126,12 @@ function LastWords({ data }: { data: CardData }) {
 }
 
 export function CardImage({ data }: { data: CardData }) {
-  const survivors = data.survivedBy.length ? `Survived by ${data.survivedBy.join(", ")}` : "No known survivors";
+  const survivors = [
+    data.survivedBy.length ? `Survived by ${data.survivedBy.join(", ")}` : "No known survivors",
+    data.stars === 0 ? "Nobody came to the funeral." : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
   return (
     <Scene>
       <div style={{ display: "flex", ...mono(15) }}>{data.status === "alive" ? "Prematurely mourning" : "In loving memory of"}</div>

@@ -27,7 +27,7 @@ export function deriveStatus({ archived, lastCommit, now = new Date() }: StatusI
   causeOfDeath: string;
 } {
   if (archived) return { status: "archived", causeOfDeath: "Archived by its maintainers" };
-  if (!lastCommit) return { status: "never-lived", causeOfDeath: "Never drew a single breath" };
+  if (!lastCommit) return { status: "never-lived", causeOfDeath: "Never lived" };
   const years = completedYears(lastCommit, now);
   if (years >= 1) return { status: "dead", causeOfDeath: `Dormant for ${years} year${years === 1 ? "" : "s"}` };
   return { status: "alive", causeOfDeath: "Still breathing" };

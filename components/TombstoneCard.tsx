@@ -26,7 +26,7 @@ function Survivors({ logins }: { logins: string[] }) {
           <Image
             key={login}
             src={`https://avatars.githubusercontent.com/${login}?s=96`}
-            alt={login}
+            alt={`GitHub avatar of ${login}`}
             title={login}
             width={96}
             height={96}
