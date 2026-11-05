@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EPITAPH_STYLES, type EpitaphStyle } from "@/lib/ai/styles";
 
 type Ritual = "autopsy" | "seance";
@@ -10,12 +10,12 @@ type RitualResult = { ritual: Ritual; text: string; note?: string };
 const TITLES: Record<Ritual, string> = { autopsy: "Autopsy report", seance: "A voice from beyond" };
 const BUTTON = "border border-pale/25 bg-night/70 px-4 py-2.5 text-pale transition hover:border-amber hover:text-amber disabled:opacity-60";
 
-async function performRitual(owner: string, repo: string, ritual: Ritual): Promise<RitualResult> {
+async function performRitual(owner: string, repo: string, ritual: Ritual, style: EpitaphStyle): Promise<RitualResult> {
   try {
     const res = await fetch("/api/ritual", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ owner, repo, ritual }),
+      body: JSON.stringify({ owner, repo, ritual, style }),
     });
     const data: { text?: string; fromModel?: boolean; error?: string } = await res.json();
     if (!res.ok || !data.text) return { ritual, text: data.error ?? "The candles blew out. Try the ritual again." };
@@ -33,11 +33,20 @@ export function Rituals({ owner, repo, style }: { owner: string; repo: string; s
 
   const changeStyle = (next: string) => router.replace(`${pathname}?style=${encodeURIComponent(next)}`, { scroll: false });
 
+  const lastRitual = useRef<Ritual | null>(null);
+
   const run = async (ritual: Ritual) => {
+    lastRitual.current = ritual;
     setPending(ritual);
-    setResult(await performRitual(owner, repo, ritual));
+    setResult(await performRitual(owner, repo, ritual, style));
     setPending(null);
   };
+
+  const rerun = useRef(run);
+  rerun.current = run;
+  useEffect(() => {
+    if (lastRitual.current) void rerun.current(lastRitual.current);
+  }, [style]);
 
   return (
     <div className="relative z-[2] mx-auto mt-7 max-w-[620px] font-mono text-xs">
