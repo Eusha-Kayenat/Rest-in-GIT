@@ -48,13 +48,13 @@ reads its public history, then carves it into a shareable tombstone card:
 
 | On the stone | Where it comes from |
 | --- | --- |
-| 🪦 **Name** | The repository itself |
-| 🌙 **Born** | The repo's creation date |
-| ☠️ **Died** | The date of the final commit |
-| 👻 **Last words** | The final commit message, verbatim |
-| 🕯️ **Survived by** | The top contributors |
-| ⚰️ **Cause of death** | Archived, or dormant for N years |
-| 🦇 **Epitaph** | Written by an open-weight model (Gemma) |
+|  **Name** | The repository itself |
+|  **Born** | The repo's creation date |
+|  **Died** | The date of the final commit |
+|  **Last words** | The final commit message, verbatim |
+|  **Survived by** | The top contributors |
+|  **Cause of death** | Archived, or dormant for N years |
+|  **Epitaph** | Written by an open-weight model (Gemma) |
 
 The real last words are often funnier, or sadder, than anything we could invent.
 `fix typo` hits differently when it's the last thing a project ever says.
