@@ -32,7 +32,7 @@ and the final commit message it ever whispered.
 ![Ollama](https://img.shields.io/badge/Ollama-Local%20AI-1b1626?style=for-the-badge)
 ![Hacktoberfest](https://img.shields.io/badge/Hacktoberfest-Open%20Source%20AI-f59e0b?style=for-the-badge)
 
-[**🕯️ Visit the Graveyard**] · [**⚰️ Watch the Burial (demo)**] · [**👻 Report a Haunting**]
+**🕯️ Visit the Graveyard** · **⚰️ Watch the Burial (demo)** · **👻 Report a Haunting**
 
 </div>
 
