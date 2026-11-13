@@ -285,11 +285,6 @@ last-words categories, and better mobile layouts.
 - Model: **Gemma**, served with **Ollama**
 - Every maintainer whose last commit made someone smile
 
-## 🕸️ License
-
-Released under the [MIT License](LICENSE). *(Add a LICENSE file to your repo.)*
-
----
 
 <div align="center">
 
